@@ -15,7 +15,7 @@ st.image("marvel-dc.jpeg")
 
 st.header("Comparación Peliculas Marvel-DC (Opción de Filtrar en la esquina superior izquierda)")
 
-
+#st.write("")
 
 #Carga de datos
 df_db = pd.read_excel(r'db.xls')
