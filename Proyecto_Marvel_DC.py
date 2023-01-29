@@ -14,7 +14,7 @@ def main():
     with c7:
         st.title("Marvel V.S. DC")
 
-    menu = ["Historia de ambas Compañías", "Comparación Marvel-DC", "Gráficos", "Opción 3"]
+    menu = ["Historia de ambas Compañías", "Comparación Marvel-DC", "Gráficos"]
     choice = st.sidebar.selectbox("Seleccione una opción", menu)
 
     if choice == "Historia de ambas Compañías":
@@ -50,6 +50,7 @@ def main():
 
 
     elif choice == "Comparación Marvel-DC":
+        import plotly.express as px
         st.header(":alien:¿Cuál será la mejor compañía?")
         st.header("Date un gusto escuchando esto")
         st.audio("Avengers Infinity war.mp3")
@@ -96,24 +97,9 @@ def main():
         with col6:
             st.markdown("![Alt Text](https://i.imgur.com/bTb5UHQ.gif)")
 
-
+        st.markdown('---')
         st.markdown('---')
         st.image("dcvs.jpeg")
-
-
-        data = [go.Box(x=df_db["Company"],y=df_db["Rate"])] #pointpos=0 para ubicación de los puntos en el centro / boxpoints ="all" si se quieren visualizar todos los puntos
-
-        #Definición de objeto "layout": diseño del gráfico como título, nombres de ejes,...
-        layout = go.Layout(title="",height=500)
-
-        #Creación de objeto "Figure" de Plotly a partir de los objetos data y layout creados previamente
-        fig2 = go.Figure(data=data, layout=layout)
-
-
-        fig1 = px.histogram(df_db, x="Minutes", color="Company")
-
-
-
         col3,col4 = st.columns(2)
         #TOP PELÍCULAS
         st.markdown('---')
@@ -150,64 +136,17 @@ def main():
             CaptainAmericaCivilWar = st.slider('Captain America: Civil War (78/100 IMDb):', 0, 100)
             st.header("Vídeo Parodia Marvel V.S DC ")
             st.video("Marvel VS DC (Parody Battle!).mp4")
-                
-            st.image("marvelvs.jpeg")
-
-        col1,col2 = st.columns([6,4])
-
-        # Plot! 
-        with col1:
-            st.header("Duración de sus películas")
-            st.plotly_chart(fig1, use_container_width=False)
-            
-            rate_por_película = (df_db.groupby(by=['Original Title']).sum()[['Metascore']].sort_values(by='Metascore'))
-
-            #Guardar el gráfico de barras en la siguiente variable
-
-            fig_rate_pelicula = px.bar(
-            rate_por_película,
-            x = 'Metascore',
-            y=rate_por_película.index, #se pone el index porque esta como index esa columna dentro del df nuevo que creamos que esta agrupado
-            orientation= "h", #horizontal bar chart
-            color_discrete_sequence = ["#f5b932"] * len(rate_por_película),
-            template='plotly_white',)
-
-            fig_rate_pelicula.update_layout(
-            plot_bgcolor = "rgba(0,0,0,0)",
-            xaxis=(dict(showgrid = False)))
-
-            ventas_por_vendedor = (
-            df_db.groupby(by=['Original Title']).sum()[['Gross Worldwide']].sort_values(by='Gross Worldwide'))
-
-            
-            #Crear la gráfica de barras para los vendedores
-            fig_ventas_por_vendedor = px.bar(
-            ventas_por_vendedor,
-            x=ventas_por_vendedor.index,
-            y='Gross Worldwide',
-            color_discrete_sequence = ["#F5B932"]*len(ventas_por_vendedor),
-            template = 'plotly_white',)
-
-            fig_ventas_por_vendedor.update_layout(
-            xaxis=dict(tickmode='linear'), # se asegura que todos los ejes de X se muestren
-            plot_bgcolor='rgba(0,0,0,0)',
-            yaxis=(dict(showgrid=False)),)    
-            st.header("Recaudación por Película")
-            st.plotly_chart(fig_ventas_por_vendedor, use_container_width = True) #esta va al lado izquierdo
-            st.markdown("![Alt Text](https://media.tenor.com/tiZXjdtJUIkAAAAC/robert-downey-jr-tony-stark.gif)")
-            
-
-
-            
-
-        with col2:
-            st.header("Valoración en IMDb según la Compañía")
-            st.plotly_chart(fig2, use_container_width=False)
-            st.header("Metapuntuación por Película")
-            st.plotly_chart(fig_rate_pelicula, use_container_width = True)
-            st.markdown("![Alt Text](https://media2.giphy.com/media/Indq8l4l6Tq13lNtxF/giphy360p.mp4?cid=ecf05e47q0te0ohz7ld2qpsp2h0jp7ax3msrpdma6zsc70ah&rid=giphy360p.mp4&ct=v&cc=en)")
+              
+        st.image("marvelvs.jpeg")
         st.markdown('---')
-
+        st.markdown('---')  
+        cl6,cl7=st.columns([6,4])
+        with cl6:
+            st.markdown("![Alt Text](https://media2.giphy.com/media/Indq8l4l6Tq13lNtxF/giphy360p.mp4?cid=ecf05e47q0te0ohz7ld2qpsp2h0jp7ax3msrpdma6zsc70ah&rid=giphy360p.mp4&ct=v&cc=en)")
+        with cl7:
+            st.markdown("![Alt Text](https://media.tenor.com/tiZXjdtJUIkAAAAC/robert-downey-jr-tony-stark.gif)")
+        st.markdown('---')
+        st.markdown('---')  
         average_rating = round(df_db["Rate"].mean(), 1)
         star_rating = ":star:" * int(7)
 
@@ -284,11 +223,124 @@ def main():
         st.header("Gracias por visitar la Web!!")
         st.audio("Marvel.mp3")
         
-    elif choice == "Opción 2":
-        st.write("Contenido de la opción 2")
-    elif choice == "Opción 3":
-        st.write("Contenido de la opción 3")
-    
+    elif choice == "Gráficos":
+        import plotly.express as px
+        df_db = pd.read_excel(r'db.xls')
+        # Create a scatter plot
+        fig = px.scatter(df_db, x="Release", y="Opening Weekend USA", facet_col="Company", color="Original Title")
+
+        # Show the chart
+        st.plotly_chart(fig)
+        st.markdown('---')
+        st.markdown('---')
+        cl3,cl4=st.columns(2)
+        with cl3:
+
+            import altair as alt
+            # Create a chart
+            chart = alt.Chart(df_db).mark_bar().encode(
+                x='Minutes',
+                y='Company'
+            )
+
+            # Show the chart
+            st.altair_chart(chart)
+        with cl4:
+
+            chart = alt.Chart(df_db).mark_bar().encode(
+                x='Gross Worldwide',
+                y='Company'
+            )
+
+            # Show the chart
+            st.altair_chart(chart)
+
+        data = [go.Box(x=df_db["Company"],y=df_db["Rate"])] #pointpos=0 para ubicación de los puntos en el centro / boxpoints ="all" si se quieren visualizar todos los puntos
+
+        #Definición de objeto "layout": diseño del gráfico como título, nombres de ejes,...
+        layout = go.Layout(title="",height=500)
+
+        #Creación de objeto "Figure" de Plotly a partir de los objetos data y layout creados previamente
+        fig2 = go.Figure(data=data, layout=layout)
+
+
+        fig1 = px.histogram(df_db, x="Minutes", color="Company")
+
+        st.markdown('---')
+        st.markdown('---')
+        col1,col2 = st.columns([5,5])
+        
+        # Plot! 
+        with col1:
+            st.header("Duración de sus películas")
+            st.plotly_chart(fig1, use_container_width=False)
+            
+            rate_por_película = (df_db.groupby(by=['Original Title']).sum()[['Metascore']].sort_values(by='Metascore'))
+
+            #Guardar el gráfico de barras en la siguiente variable
+
+            fig_rate_pelicula = px.bar(
+            rate_por_película,
+            x = 'Metascore',
+            y=rate_por_película.index, #se pone el index porque esta como index esa columna dentro del df nuevo que creamos que esta agrupado
+            orientation= "h", #horizontal bar chart
+            color_discrete_sequence = ["#f5b932"] * len(rate_por_película),
+            template='plotly_white',)
+
+            fig_rate_pelicula.update_layout(
+            plot_bgcolor = "rgba(0,0,0,0)",
+            xaxis=(dict(showgrid = False)))
+
+            ventas_por_vendedor = (
+            df_db.groupby(by=['Original Title']).sum()[['Gross Worldwide']].sort_values(by='Gross Worldwide'))
+
+            
+            #Crear la gráfica de barras para los vendedores
+            fig_ventas_por_vendedor = px.bar(
+            ventas_por_vendedor,
+            x=ventas_por_vendedor.index,
+            y='Gross Worldwide',
+            color_discrete_sequence = ["#F5B932"]*len(ventas_por_vendedor),
+            template = 'plotly_white',)
+
+            fig_ventas_por_vendedor.update_layout(
+            xaxis=dict(tickmode='linear'), # se asegura que todos los ejes de X se muestren
+            plot_bgcolor='rgba(0,0,0,0)',
+            yaxis=(dict(showgrid=False)),)    
+         
+        st.markdown('---')
+        st.markdown('---')   
+        st.header("Recaudación por Película")
+        st.plotly_chart(fig_ventas_por_vendedor, use_container_width = True) #esta va al lado izquierdo
+        
+
+            
+
+        with col2:
+            st.header("Valoración en IMDb según la Compañía")
+            st.plotly_chart(fig2, use_container_width=False)
+        st.markdown('---')
+        st.markdown('---')
+        import matplotlib.pyplot as plt
+
+        st.header("Metapuntuación por Película")
+        st.plotly_chart(fig_rate_pelicula, use_container_width = True)
+        st.markdown('---')
+        # Create some data
+        st.title("Comparación de la recaudación de Superman")
+        labels = ['Superman', 'Superman 2', 'Superman 3', 'Superman 4']
+        sizes = [300000000, 108185706, 59950623, 15681020]
+        st.set_option('deprecation.showPyplotGlobalUse', False)
+
+        # Create a pie chart
+        plt.pie(sizes, labels=labels)
+
+        # Show the chart
+        st.pyplot()
+        st.markdown('---')
+        st.markdown('---')
+
+        
 
 if __name__== "__main__":
     main()
